@@ -37,15 +37,7 @@ struct ContentView: View {
     var body: some View {
         Button("Load") {
             nodes = Bundle.main.decode([Node].self, from: "nodes.json")
-            for i in 0 ..< nodes.count {
-                print(nodes[i].name)
-                for j in 0 ..< nodes[i].children.count {
-                    print(nodes[i].children[j].name)
-                    for k in 0 ..< nodes[i].children[j].children.count {
-                        print(nodes[i].children[j].children[k].name)
-                    }
-                }
-            }
+            printNodes()
         }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -54,5 +46,20 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+extension ContentView {
+    
+    func printNodes() {
+        for i in 0 ..< nodes.count {
+            print(nodes[i].name)
+            for j in 0 ..< nodes[i].children.count {
+                print(nodes[i].children[j].name)
+                for k in 0 ..< nodes[i].children[j].children.count {
+                    print(nodes[i].children[j].children[k].name)
+                }
+            }
+        }
     }
 }
