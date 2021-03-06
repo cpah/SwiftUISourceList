@@ -17,15 +17,13 @@ class Node: NSObject, Identifiable, Codable {
     var id = UUID()
     var type: NodeType
     @objc var name: String
-    @objc var cleared: Bool
     @objc var children = [Node]()
     @objc var childrenCount: Int {return children.count}
     @objc var isLeaf: Bool {return children.count == 0}
 
-    init(type: NodeType, name: String, cleared: Bool, children: [Node]) {
+    init(type: NodeType, name: String, children: [Node]) {
         self.type = type
         self.name = name
-        self.cleared = cleared
         self.children = children
     }
 }
