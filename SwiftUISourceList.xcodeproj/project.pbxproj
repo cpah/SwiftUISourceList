@@ -11,6 +11,8 @@
 		F5894F7825F29B2600F43B56 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5894F7725F29B2600F43B56 /* ContentView.swift */; };
 		F5894F7A25F29B2700F43B56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5894F7925F29B2700F43B56 /* Assets.xcassets */; };
 		F5894F7D25F29B2700F43B56 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5894F7C25F29B2700F43B56 /* Preview Assets.xcassets */; };
+		F58D2CC325F442AC00675592 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58D2CC225F442AC00675592 /* Helper.swift */; };
+		F58D2CC625F442BB00675592 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = F58D2CC525F442BB00675592 /* nodes.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +23,8 @@
 		F5894F7C25F29B2700F43B56 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F5894F7E25F29B2800F43B56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F5894F7F25F29B2800F43B56 /* SwiftUISourceList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftUISourceList.entitlements; sourceTree = "<group>"; };
+		F58D2CC225F442AC00675592 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Helper.swift; path = Data/Helper.swift; sourceTree = "<group>"; };
+		F58D2CC525F442BB00675592 /* nodes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = nodes.json; path = Data/nodes.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +59,8 @@
 			children = (
 				F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */,
 				F5894F7725F29B2600F43B56 /* ContentView.swift */,
+				F58D2CC525F442BB00675592 /* nodes.json */,
+				F58D2CC225F442AC00675592 /* Helper.swift */,
 				F5894F7925F29B2700F43B56 /* Assets.xcassets */,
 				F5894F7E25F29B2800F43B56 /* Info.plist */,
 				F5894F7F25F29B2800F43B56 /* SwiftUISourceList.entitlements */,
@@ -128,6 +134,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F58D2CC625F442BB00675592 /* nodes.json in Resources */,
 				F5894F7D25F29B2700F43B56 /* Preview Assets.xcassets in Resources */,
 				F5894F7A25F29B2700F43B56 /* Assets.xcassets in Resources */,
 			);
@@ -142,6 +149,7 @@
 			files = (
 				F5894F7825F29B2600F43B56 /* ContentView.swift in Sources */,
 				F5894F7625F29B2600F43B56 /* SwiftUISourceListApp.swift in Sources */,
+				F58D2CC325F442AC00675592 /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
