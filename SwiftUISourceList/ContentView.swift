@@ -31,10 +31,13 @@ struct ContentView: View {
                 .disabled(nodeID == nil)
                 .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .leaf)
             }
+            .padding(.top, 5)
             HStack {
                 Button("Delete") {
                     // post notification to OutlineViewController to delete selected node
                     NotificationCenter.default.post(name: Notification.Name("selectedNodeDeleted"), object: self)
+                    nodeID = nil
+                    nodeName = ""
                 }
                 .disabled(nodeID == nil)
                 .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .tree)
@@ -50,6 +53,7 @@ struct ContentView: View {
                 Text(nodeID?.uuidString ?? "Nil")
                 Text(nodeName)
             }
+            .padding(.bottom, 5)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $moveNodeSheetIsVisible, content: {
@@ -182,5 +186,17 @@ extension ContentView {
                 }
             }
         }
+    }
+    
+    func countNodes() -> Int {
+        var count = 0
+        count += nodes.count
+        for i in 0 ..< nodes.count {
+            count += nodes[i].children.count
+            for j in 0 ..< nodes[i].children.count {
+                count += nodes[i].children[j].children.count
+            }
+        }
+        return count
     }
 }

@@ -51,7 +51,7 @@ struct MoveNodeSheet: View {
                     destinationIndexPath = []
                     moveNodeSheetIsVisible = false
                 }
-                Button("OK"){
+                Button("OK") {
                     destinationIndexPath = getNodeIndexPath(nodes: nodes, nodeID: selectedDestinationNodeID)
                     moveNodeSheetIsVisible = false
                     if destinationIndexPath.count > 0 {
