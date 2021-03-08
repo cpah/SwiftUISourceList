@@ -37,9 +37,11 @@ class AddedNode {
 var nodeIndexPath = NodeIndexPath()
 var addedNode = AddedNode()
 
-class SourceViewController: NSViewController {
+class SourceViewController: NSViewController, NSOutlineViewDataSource {
     
     @objc dynamic var contents = [Node]()
+    var expandedNodes = [String]() // Supports use of persistent data to restore expanded nodes
+    var itemsExpanded = false // Used to prevent spurious expansion/collapse after initial load
 
     @IBOutlet weak var outlineView: NSOutlineView!
     @IBOutlet var treeController: NSTreeController!
@@ -80,11 +82,82 @@ class SourceViewController: NSViewController {
         contents = sortedNodes(nodes: contents)
     }
 
-    
     @IBAction func nameCellEdited(_ sender: Any) {}
     
     func setContents(nodes: [Node]) {
         contents = nodes
+        if itemsExpanded {return}
+        expandedNodes = sortExpandedNodes(identifiers: expandedNodes)
+        for i in 0 ..< expandedNodes.count {
+            outlineView.expandItem(nodeFromIdentifier(anObject: expandedNodes[i]))
+        }
     }
+    
+    func sortExpandedNodes(identifiers: [String]) -> [String] { // ensures parents will appear before their children
+        var sortedExpandedNodes = [String]()
+        var trees = [String]()
+        for i in 0 ..< contents.count {
+            trees.append(contents[i].name)
+        }
+        // put trees first
+        for i in 0 ..< identifiers.count {
+            if trees.contains(identifiers[i]) {
+                sortedExpandedNodes.append(identifiers[i])
+            }
+        }
+        // add branches after categories
+        for i in 0 ..< identifiers.count {
+            if !trees.contains(identifiers[i]) {
+                sortedExpandedNodes.append(identifiers[i])
+            }
+        }
+        return sortedExpandedNodes
+    }
+    
+    // encode expanded node identifiers for saving as persistent data
+    func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
+        guard let node = nodefromNSTreenode(from: item!) else {return false}
+        itemsExpanded = true
+        return node.id.uuidString
+    }
+    
+    // retrieve expanded node identifiers from persistent data and append them to a local array (for processing once treeController has been instantiated
+    func outlineView(_ outlineView: NSOutlineView, itemForPersistentObject object: Any) -> Any? {
+        expandedNodes.append(object as! String)
+        return nil
+    }
+
+    // Convert NSTreeNode to Node
+    func nodefromNSTreenode (from item: Any) -> Node? {
+        guard let treeNode = item as? NSTreeNode else {return nil}
+            let node = treeNode.representedObject as? Node
+            return node
+    }
+    // find the treeNode associated with an identifier (by name) by processing identifier (name here because identifier changes on each app launch) - and treeController nodes array in next function
+    private func nodeFromIdentifier(anObject: Any) -> NSTreeNode? {
+        return nodeFromIdentifier(anObject: anObject, nodes: treeController.arrangedObjects.children)
+    }
+
+    // search all levels of tree structure (recursively) to find treeNode associated with the passed identifier (name)
+    private func nodeFromIdentifier(anObject: Any, nodes: [NSTreeNode]!) -> NSTreeNode? {
+        var treeNode: NSTreeNode?
+        for node in nodes {
+            if let testNode = node.representedObject as? Node {
+                let idCheck = anObject as? String
+                if idCheck == testNode.id.uuidString {
+                    treeNode = node
+                    break
+                }
+                if node.children != nil {
+                    if let nodeCheck = nodeFromIdentifier(anObject: anObject, nodes: node.children) {
+                        treeNode = nodeCheck
+                        break
+                    }
+                }
+            }
+        }
+        return treeNode
+    }
+
     
 }
