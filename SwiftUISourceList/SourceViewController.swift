@@ -55,6 +55,10 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
         // Do view setup here.
     }
     
+    override func viewDidAppear() {
+        view.window?.makeFirstResponder(outlineView)
+    }
+    
     @objc func addNodeAtIndexPath(_ notification: Notification) {
         let indexPath = treeController.selectionIndexPath
         let newNode = notification.userInfo![AddedNode.identifierKey] as! Node
@@ -97,7 +101,7 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
         var sortedExpandedNodes = [String]()
         var trees = [String]()
         for i in 0 ..< contents.count {
-            trees.append(contents[i].name)
+            trees.append(contents[i].id.uuidString)
         }
         // put trees first
         for i in 0 ..< identifiers.count {
@@ -105,7 +109,7 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
                 sortedExpandedNodes.append(identifiers[i])
             }
         }
-        // add branches after categories
+        // add branches after trees
         for i in 0 ..< identifiers.count {
             if !trees.contains(identifiers[i]) {
                 sortedExpandedNodes.append(identifiers[i])

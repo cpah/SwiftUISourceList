@@ -61,8 +61,8 @@ struct ContentView: View {
         })
         .onAppear(perform: { // load nodes from file
             nodes = Bundle.main.decode([Node].self, from: "nodes.json")
-            nodeID = nodes[0].id
-            nodeName = nodes[0].name
+            //nodeID = nodes[0].id
+            //nodeName = nodes[0].name
         })
     }
 }
@@ -114,7 +114,7 @@ struct SourceVC: NSViewControllerRepresentable {
                 if node.type == .branch {
                     image = NSImage(named: NSImage.folderName)!
                 } else {
-                    image = NSImage(named: NSImage.multipleDocumentsName)!
+                    image = NSImage(named: NSImage.menuMixedStateTemplateName)!
                 }
                 view?.imageView?.image = image
             }
