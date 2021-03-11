@@ -17,6 +17,7 @@
 		F5894F7A25F29B2700F43B56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5894F7925F29B2700F43B56 /* Assets.xcassets */; };
 		F5894F7D25F29B2700F43B56 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5894F7C25F29B2700F43B56 /* Preview Assets.xcassets */; };
 		F58D2CC325F442AC00675592 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58D2CC225F442AC00675592 /* Helper.swift */; };
+		F5F716BD25F97D7B00BDDB52 /* trees.json in Resources */ = {isa = PBXBuildFile; fileRef = F5F716BC25F97D7B00BDDB52 /* trees.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		F5894F7E25F29B2800F43B56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F5894F7F25F29B2800F43B56 /* SwiftUISourceList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftUISourceList.entitlements; sourceTree = "<group>"; };
 		F58D2CC225F442AC00675592 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Helper.swift; path = Data/Helper.swift; sourceTree = "<group>"; };
+		F5F716BC25F97D7B00BDDB52 /* trees.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = trees.json; path = Data/trees.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 				F5321AD225F63869000C224F /* SourceViewController.xib */,
 				F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */,
 				F533EA7F25F6989300798021 /* Nodes.swift */,
+				F5F716BC25F97D7B00BDDB52 /* trees.json */,
 				F554A92225F44C700025C50B /* nodes.json */,
 				F58D2CC225F442AC00675592 /* Helper.swift */,
 				F5894F7925F29B2700F43B56 /* Assets.xcassets */,
@@ -147,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F554A92325F44C700025C50B /* nodes.json in Resources */,
+				F5F716BD25F97D7B00BDDB52 /* trees.json in Resources */,
 				F5321AD425F63869000C224F /* SourceViewController.xib in Resources */,
 				F5894F7D25F29B2700F43B56 /* Preview Assets.xcassets in Resources */,
 				F5894F7A25F29B2700F43B56 /* Assets.xcassets in Resources */,

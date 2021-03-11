@@ -12,7 +12,6 @@ struct MoveNodeSheet: View {
     @Binding var moveNodeSheetIsVisible: Bool
     @Binding var nodes: [Node]
     @Binding var nodeID: UUID?
-    @State private var destinationIndexPath: IndexPath = []
     @State private var destinationNodes: [Node] = []
     @State private var selectedDestinationNodeID = UUID()
     
@@ -48,38 +47,36 @@ struct MoveNodeSheet: View {
             HStack {
                 Spacer()
                 Button("Cancel"){
-                    destinationIndexPath = []
                     moveNodeSheetIsVisible = false
                 }
                 Button("OK") {
-                    destinationIndexPath = getNodeIndexPath(nodes: nodes, nodeID: selectedDestinationNodeID)
                     moveNodeSheetIsVisible = false
-                    if destinationIndexPath.count > 0 {
-                        nodeIndexPath.indexPath = destinationIndexPath
-                        // post notification to OutlineViewController to move selected node to indexPath passed
-                        NotificationCenter.default.post(name: Notification.Name("selectedNodeMoved"), object: self, userInfo: [NodeIndexPath.identifierKey:nodeIndexPath.indexPath])
-                    }
+                    let index = getTreeIndex(forID: nodeID)
+                    trees[index].parentID = selectedDestinationNodeID
+                    nodes = populateNodes()
                 }
             }
-            .padding(.bottom,10)
+            .padding(.bottom, 10)
+            .padding(.trailing, 5)
         }
-        .frame(width: 300, height: 150)
+        .frame(width: 300, height: 110)
     }
     
     func getSourceIndexPathName() -> String {
-        var sourceIndexPath = getNodeIndexPath(nodes: nodes, nodeID: nodeID)
-        sourceIndexPath.removeLast()
-        if sourceIndexPath.count == 1 {
-            return nodes[sourceIndexPath[0]].name
+        var nodeIndexPath = getNodeIndexPath(nodes: nodes, nodeID: nodeID)
+        nodeIndexPath.removeLast()
+        if nodeIndexPath.count == 1 {
+            return nodes[nodeIndexPath[0]].name
+        } else {
+            return nodes[nodeIndexPath[0]].children[nodeIndexPath[1]].name
         }
-        return nodes[sourceIndexPath[0]].children[sourceIndexPath[1]].name
     }
     
 }
 
 struct MoveNodeSheet_Previews: PreviewProvider {
     @State static var moveNodeSheetIsVisible = true
-    @State static var nodes = [Node(type: .leaf, name: "Leaf 1", children: [])]
+    @State static var nodes = [Node(id: UUID(), type: .leaf, name: "Leaf 1", children: [])]
     @State static var nodeID: UUID? = nil
     static var previews: some View {
         MoveNodeSheet(moveNodeSheetIsVisible: $moveNodeSheetIsVisible, nodes: $nodes, nodeID: $nodeID)

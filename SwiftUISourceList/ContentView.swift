@@ -13,20 +13,30 @@ struct ContentView: View {
     @State private var nodeID: UUID? = nil
     @State private var nodeName = ""
     @State private var moveNodeSheetIsVisible = false
+    @State private var newContent = true // prevents repeated call to setContents but supports forcing display updates
     
     var body: some View {
         VStack {
             HStack {
                 Button("Add Branch"){
-                    // post notification (with new Branch node) to ViewController to add node to selected node
-                    addedNode.node = Node(type: .branch, name: "New Branch", children: [])
-                    NotificationCenter.default.post(name: Notification.Name("selectedNodeAdded"), object: self, userInfo: [AddedNode.identifierKey:addedNode.node!])
+                    let index = getTreeIndex(forID: nodeID)
+                    let newBranch = Tree(type: .branch, name: "New Branch", parentID: trees[index].id)
+                    trees.append(newBranch)
+                    trees = trees.sorted { $0.type.rawValue < $1.type.rawValue }
+                    nodes = populateNodes()
+                    newContent = true
+                    nodeID = newBranch.id
+                    nodeName = newBranch.name
                 }
                 .disabled(getNodeType(nodes: nodes, nodeID: nodeID) != .tree)
                 Button("Add Leaf") {
-                    // post notification (with new Leaf node) to ViewController to add node to selected node
-                    addedNode.node = Node(type: .leaf, name: "New Leaf", children: [])
-                    NotificationCenter.default.post(name: Notification.Name("selectedNodeAdded"), object: self, userInfo: [AddedNode.identifierKey:addedNode.node!])
+                    let index = getTreeIndex(forID: nodeID)
+                    let newLeaf = Tree(type: .leaf, name: "New Leaf", parentID: trees[index].id)
+                    trees.append(newLeaf)
+                    nodes = populateNodes()
+                    newContent = true
+                    nodeID = newLeaf.id
+                    nodeName = newLeaf.name
                 }
                 .disabled(nodeID == nil)
                 .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .leaf)
@@ -34,8 +44,10 @@ struct ContentView: View {
             .padding(.top, 5)
             HStack {
                 Button("Delete") {
-                    // post notification to OutlineViewController to delete selected node
-                    NotificationCenter.default.post(name: Notification.Name("selectedNodeDeleted"), object: self)
+                    let index = getTreeIndex(forID: nodeID)
+                    trees.remove(at: index)
+                    nodes = populateNodes()
+                    newContent = true
                     nodeID = nil
                     nodeName = ""
                 }
@@ -43,12 +55,13 @@ struct ContentView: View {
                 .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .tree)
                 .disabled(nodeHasChildren(nodes: nodes, nodeID: nodeID))
                 Button("Move") {
+                    newContent = true
                     moveNodeSheetIsVisible.toggle()
                 }
                 .disabled(nodeID == nil)
                 .disabled(getNodeType(nodes: nodes, nodeID: nodeID) != .leaf)
             }
-            SourceVC(nodes: $nodes, nodeID: $nodeID, nodeName: $nodeName)
+            SourceVC(nodes: $nodes, nodeID: $nodeID, nodeName: $nodeName, newContent: $newContent)
             VStack {
                 Text(nodeID?.uuidString ?? "Nil")
                 Text(nodeName)
@@ -60,7 +73,9 @@ struct ContentView: View {
             MoveNodeSheet(moveNodeSheetIsVisible: $moveNodeSheetIsVisible, nodes: $nodes, nodeID: $nodeID)
         })
         .onAppear(perform: { // load nodes from file
-            nodes = Bundle.main.decode([Node].self, from: "nodes.json")
+            trees = Bundle.main.decode([Tree].self, from: "trees.json")
+            trees = trees.sorted { $0.type.rawValue < $1.type.rawValue}
+            nodes = populateNodes()
             //nodeID = nodes[0].id
             //nodeName = nodes[0].name
         })
@@ -74,6 +89,7 @@ struct SourceVC: NSViewControllerRepresentable {
     @Binding var nodes: [Node]
     @Binding var nodeID: UUID?
     @Binding var nodeName: String
+    @Binding var newContent: Bool
         
     func makeNSViewController(context: Context) -> some NSViewController {
         let sourceVC = SourceViewController()
@@ -82,7 +98,15 @@ struct SourceVC: NSViewControllerRepresentable {
     
     func updateNSViewController(_ nsViewController: NSViewControllerType, context: Context) {
         guard let sourceVC = nsViewController as? SourceViewController else {return}
-        sourceVC.setContents(nodes: nodes)
+        if newContent {
+            sourceVC.setContents(nodes: nodes)
+            let indexPath = getNodeIndexPath(nodes: nodes, nodeID: nodeID)
+            if indexPath.count == 0 {
+                sourceVC.treeController.removeSelectionIndexPaths(sourceVC.treeController.selectionIndexPaths)
+            } else {
+                sourceVC.treeController.setSelectionIndexPath(indexPath)
+            }
+        }
         if !sourceVCDelegateSet {
             sourceVC.outlineView?.delegate = context.coordinator
             sourceVCDelegateSet = true
@@ -130,6 +154,7 @@ struct SourceVC: NSViewControllerRepresentable {
         func outlineViewSelectionDidChange(_ notification: Notification) {
             guard let outlineView = notification.object as? NSOutlineView else {return}
             guard self.parent.nodes.count > 0 else {return}
+            self.parent.newContent = false
             guard outlineView.selectedRow >= 0 else {
                 self.parent.nodeID = nil
                 self.parent.nodeName = ""
@@ -142,7 +167,10 @@ struct SourceVC: NSViewControllerRepresentable {
         
         @IBAction func nameCellEdited(_ sender: Any) {
             guard let nameCell = sender as? NSTextField else {return}
+            let treeIndex = getTreeIndex(forID: self.parent.nodeID)
+            trees[treeIndex].name = nameCell.stringValue
             self.parent.nodeName = nameCell.stringValue
+            // sort branch / leaf nodes alphabetically for new name
             let indexPath = getNodeIndexPath(nodes: self.parent.nodes, nodeID: self.parent.nodeID)
             if indexPath.count == 2 {
                 self.parent.nodes[indexPath[0]].children = self.parent.nodes[indexPath[0]].children.sorted{ $0.name.lowercased() < $1.name.lowercased() }
@@ -150,6 +178,7 @@ struct SourceVC: NSViewControllerRepresentable {
             if indexPath.count == 3 {
                 self.parent.nodes[indexPath[0]].children[indexPath[1]].children = self.parent.nodes[indexPath[0]].children[indexPath[1]].children.sorted{ $0.name.lowercased() < $1.name.lowercased() }
             }
+            self.parent.newContent = true
         }
         
         // Convert NSTreeNode to Node
@@ -158,14 +187,12 @@ struct SourceVC: NSViewControllerRepresentable {
                 let node = treeNode.representedObject as? Node
                 return node
         }
-
     }
     
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
     }
     
-
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -174,29 +201,3 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-extension ContentView {
-    
-    func printNodes() {
-        for i in 0 ..< nodes.count {
-            print(nodes[i].name)
-            for j in 0 ..< nodes[i].children.count {
-                print(nodes[i].children[j].name)
-                for k in 0 ..< nodes[i].children[j].children.count {
-                    print(nodes[i].children[j].children[k].name)
-                }
-            }
-        }
-    }
-    
-    func countNodes() -> Int {
-        var count = 0
-        count += nodes.count
-        for i in 0 ..< nodes.count {
-            count += nodes[i].children.count
-            for j in 0 ..< nodes[i].children.count {
-                count += nodes[i].children[j].children.count
-            }
-        }
-        return count
-    }
-}

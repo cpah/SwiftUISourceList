@@ -7,51 +7,17 @@
 
 import Cocoa
 
-// Declare notifications to support prompts and data exchange between ContentView and ViewController
-let selectedNodeAdded = NotificationCenter.default // Notification to add object at currently selected indexPath
-    .publisher(for: Notification.Name("selectedNodeAdded"))
-    .map {notification in
-        return notification.userInfo
-    }
-
-let selectedNodeDeleted = NotificationCenter.default // Notification to delete object at currently selected indexPath
-    .publisher(for: Notification.Name("selectedNodeDeleted"))
-
-let selectedNodeMoved = NotificationCenter.default // Notification to move object at currently selected indexPath to indexPath passed
-    .publisher(for: Notification.Name("selectedNodeMoved"))
-    .map {notification in
-        return notification.userInfo
-    }
-
-// Classes and variables to support userInfo in notifications (of nodes added, deleted and moved) received from ContentView
-class NodeIndexPath {
-    var indexPath = IndexPath()
-    static let identifierKey = "indexPathKey"
-}
-
-class AddedNode {
-    var node: Node? = nil
-    static let identifierKey = "nodeKey"
-}
-
-var nodeIndexPath = NodeIndexPath()
-var addedNode = AddedNode()
-
 class SourceViewController: NSViewController, NSOutlineViewDataSource {
     
     @objc dynamic var contents = [Node]()
     var expandedNodes = [String]() // Supports use of persistent data to restore expanded nodes
-    var itemsExpanded = false // Used to prevent spurious expansion/collapse after initial load
+    var savedExpandedNodes = [String]() // Supports persistence of expansions when contents reloaded
 
     @IBOutlet weak var outlineView: NSOutlineView!
     @IBOutlet var treeController: NSTreeController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Set up observers to watch out for notifications received from ContentView
-        NotificationCenter.default.addObserver(self, selector: #selector(addNodeAtIndexPath(_ :)), name: Notification.Name("selectedNodeAdded"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(deleteNodeAtIndexPath(_ :)), name: Notification.Name("selectedNodeDeleted"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(moveNodeToIndexPath(_ :)), name: Notification.Name("selectedNodeMoved"), object: nil)
         // Do view setup here.
     }
     
@@ -59,41 +25,23 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
         view.window?.makeFirstResponder(outlineView)
     }
     
-    @objc func addNodeAtIndexPath(_ notification: Notification) {
-        let indexPath = treeController.selectionIndexPath
-        let newNode = notification.userInfo![AddedNode.identifierKey] as! Node
-        var targetPath: IndexPath = []
-        if indexPath?.count == 1 {
-            targetPath = IndexPath(indexes: [indexPath![0],0])
-        } else {
-            targetPath = IndexPath(indexes: [indexPath![0],indexPath![1],0])
-        }
-        treeController.setSelectionIndexPath(targetPath)
-        treeController.addObject(newNode)
-        contents = sortedNodes(nodes: contents)
-    }
-
-    @objc func deleteNodeAtIndexPath(_ notification: Notification) {
-        let indexPath = treeController.selectionIndexPath
-        treeController.removeObject(atArrangedObjectIndexPath: indexPath!)
-    }
-    
-    @objc func moveNodeToIndexPath(_ notification: Notification) {
-        let treeNode = treeController.selectedNodes[0] // get the NSTreeNode holding the object to be moved
-        var destinationIndexPath = notification.userInfo?[NodeIndexPath.identifierKey] as! IndexPath
-        destinationIndexPath.append(0) // select destination node's children array as target for appending the object moved's treeNode to
-        treeController.move(treeNode, to: destinationIndexPath)
-        contents = sortedNodes(nodes: contents)
-    }
-
-    @IBAction func nameCellEdited(_ sender: Any) {}
+    @IBAction func nameCellEdited(_ sender: Any) {} // Stub for delegate to surpress spurious warning
     
     func setContents(nodes: [Node]) {
+        savedExpandedNodes = getExpandedNodeIDs()
         contents = nodes
-        if itemsExpanded {return}
-        expandedNodes = sortExpandedNodes(identifiers: expandedNodes)
-        for i in 0 ..< expandedNodes.count {
-            outlineView.expandItem(nodeFromIdentifier(anObject: expandedNodes[i]))
+        if savedExpandedNodes.count > 0 { // restore expanded nodes when refreshing view
+            for i in 0 ..< savedExpandedNodes.count {
+                outlineView.expandItem(nodeFromIdentifier(anObject: savedExpandedNodes[i]))
+            }
+        } else { // restore expanded nodes saved on termination
+            // Sort expanded nodes so that parents will be expanded before (any of) their children
+            if expandedNodes.count > 0 {
+                expandedNodes = sortExpandedNodes(identifiers: expandedNodes)
+                for i in 0 ..< expandedNodes.count {
+                    outlineView.expandItem(nodeFromIdentifier(anObject: expandedNodes[i]))
+                }
+            }
         }
     }
     
@@ -121,7 +69,6 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
     // encode expanded node identifiers for saving as persistent data
     func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
         guard let node = nodefromNSTreenode(from: item!) else {return false}
-        itemsExpanded = true
         return node.id.uuidString
     }
     
@@ -162,6 +109,26 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
         }
         return treeNode
     }
-
     
+    func getExpandedNodeIDs() -> [String] { // supports saving expanded nodes when refreshing views (non-persistent data)
+        var expandedNodeIDs = [String]()
+        var node:Node? = nil
+        for i in 0 ..< treeController.arrangedObjects.children!.count {
+            node = nodefromNSTreenode(from: treeController.arrangedObjects.children?[i] as Any)
+            if outlineView.isItemExpanded(treeController.arrangedObjects.children?[i]) {
+                expandedNodeIDs.append(node!.id.uuidString)
+            }
+            if treeController.arrangedObjects.children![i].children != nil {
+                for j in 0 ..< treeController.arrangedObjects.children![i].children!.count {
+                    node = nodefromNSTreenode(from: treeController.arrangedObjects.children?[i].children?[j] as Any)
+                    if outlineView.isItemExpanded(treeController.arrangedObjects.children?[i].children?[j]) {
+                        expandedNodeIDs.append(node!.id.uuidString)
+                    }
+                }
+            }
+        }
+        return expandedNodeIDs
+    }
+
 }
+
