@@ -16,60 +16,59 @@ struct ContentView: View {
     @State private var newContent = true // prevents repeated call to setContents but supports forcing display updates
     
     var body: some View {
-        VStack {
-            HStack {
-                Button("Add Branch"){
-                    let index = getTreeIndex(forID: nodeID)
-                    let newBranch = Tree(type: .branch, name: "New Branch", parentID: trees[index].id)
-                    trees.append(newBranch)
-                    // sort trees into type order; branches must come before leaves for populateNodes to work
-                    trees = trees.sorted { $0.type.rawValue < $1.type.rawValue }
-                    nodes = populateNodes()
-                    newContent = true
-                    nodeID = newBranch.id
-                    nodeName = newBranch.name
-                }
-                .disabled(getNodeType(nodes: nodes, nodeID: nodeID) != .tree)
-                Button("Add Leaf") {
-                    let index = getTreeIndex(forID: nodeID)
-                    let newLeaf = Tree(type: .leaf, name: "New Leaf", parentID: trees[index].id)
-                    trees.append(newLeaf)
-                    nodes = populateNodes()
-                    newContent = true
-                    nodeID = newLeaf.id
-                    nodeName = newLeaf.name
-                }
-                .disabled(nodeID == nil)
-                .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .leaf)
-            }
-            .padding(.top, 5)
-            HStack {
-                Button("Delete") {
-                    let index = getTreeIndex(forID: nodeID)
-                    trees.remove(at: index)
-                    nodes = populateNodes()
-                    newContent = true
-                    nodeID = nil
-                    nodeName = ""
-                }
-                .disabled(nodeID == nil)
-                .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .tree)
-                .disabled(nodeHasChildren(nodes: nodes, nodeID: nodeID))
-                Button("Move") {
-                    newContent = true
-                    moveNodeSheetIsVisible.toggle()
-                }
-                .disabled(nodeID == nil)
-                .disabled(getNodeType(nodes: nodes, nodeID: nodeID) != .leaf)
-            }
-            SourceVC(nodes: $nodes, nodeID: $nodeID, nodeName: $nodeName, newContent: $newContent)
+        HSplitView {
             VStack {
-                Text(nodeID?.uuidString ?? "Nil")
-                Text(nodeName)
+                HStack {
+                    MenuButton("Add") {
+                        Button("Branch"){
+                            let index = getTreeIndex(forID: nodeID)
+                            let newBranch = Tree(type: .branch, name: "New Branch", parentID: trees[index].id)
+                            trees.append(newBranch)
+                            // sort trees into type order; branches must come before leaves for populateNodes to work
+                            trees = trees.sorted { $0.type.rawValue < $1.type.rawValue }
+                            nodes = populateNodes()
+                            newContent = true
+                            nodeID = newBranch.id
+                            nodeName = newBranch.name
+                        }
+                        .disabled(getNodeType(nodes: nodes, nodeID: nodeID) != .tree)
+                        Button("Leaf") {
+                            let index = getTreeIndex(forID: nodeID)
+                            let newLeaf = Tree(type: .leaf, name: "New Leaf", parentID: trees[index].id)
+                            trees.append(newLeaf)
+                            nodes = populateNodes()
+                            newContent = true
+                            nodeID = newLeaf.id
+                            nodeName = newLeaf.name
+                        }
+                    }
+                    .disabled(nodeID == nil)
+                    .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .leaf)
+                    .frame(width: 60)
+                    Button("Delete") {
+                        let index = getTreeIndex(forID: nodeID)
+                        trees.remove(at: index)
+                        nodes = populateNodes()
+                        newContent = true
+                        nodeID = nil
+                        nodeName = ""
+                    }
+                    .disabled(nodeID == nil)
+                    .disabled(getNodeType(nodes: nodes, nodeID: nodeID) == .tree)
+                    .disabled(nodeHasChildren(nodes: nodes, nodeID: nodeID))
+                    Button("Move") {
+                        newContent = true
+                        moveNodeSheetIsVisible.toggle()
+                    }
+                    .disabled(nodeID == nil)
+                    .disabled(getNodeType(nodes: nodes, nodeID: nodeID) != .leaf)
+                }
+                .padding(5)
+                SourceVC(nodes: $nodes, nodeID: $nodeID, nodeName: $nodeName, newContent: $newContent)
             }
-            .padding(.bottom, 5)
+            DetailView(nodeID: $nodeID, nodeName: $nodeName)
+            .frame(minWidth: 300, maxWidth: .infinity, maxHeight:.infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $moveNodeSheetIsVisible, content: {
             MoveNodeSheet(moveNodeSheetIsVisible: $moveNodeSheetIsVisible, nodes: $nodes, nodeID: $nodeID)
         })
@@ -195,6 +194,18 @@ struct SourceVC: NSViewControllerRepresentable {
         return Coordinator(self)
     }
     
+}
+
+struct DetailView: View {
+    @Binding var nodeID: UUID?
+    @Binding var nodeName: String
+
+    var body: some View {
+        VStack {
+            Text(nodeID?.uuidString ?? "Nil")
+            Text(nodeName)
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
