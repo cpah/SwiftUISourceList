@@ -19,6 +19,8 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         outlineView.floatsGroupRows = false
+        outlineView.autosaveExpandedItems = true
+        outlineView.autosaveName = "sourceList"
         // Do view setup here.
     }
     
@@ -48,6 +50,27 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
         }
     }
     
+    func getExpandedNodeIDs() -> [String] { // supports saving expanded nodes when refreshing views (non-persistent data)
+        guard treeController.arrangedObjects.children!.count > 0 else {return []}
+        var expandedNodeIDs = [String]()
+        var node:Node? = nil
+        for i in 0 ..< treeController.arrangedObjects.children!.count {
+            node = nodefromNSTreenode(from: treeController.arrangedObjects.children?[i] as Any)
+            if outlineView.isItemExpanded(treeController.arrangedObjects.children?[i]) {
+                expandedNodeIDs.append(node!.id.uuidString)
+            }
+            if treeController.arrangedObjects.children![i].children != nil {
+                for j in 0 ..< treeController.arrangedObjects.children![i].children!.count {
+                    node = nodefromNSTreenode(from: treeController.arrangedObjects.children?[i].children?[j] as Any)
+                    if outlineView.isItemExpanded(treeController.arrangedObjects.children?[i].children?[j]) {
+                        expandedNodeIDs.append(node!.id.uuidString)
+                    }
+                }
+            }
+        }
+        return expandedNodeIDs
+    }
+
     func sortExpandedNodes(identifiers: [String]) -> [String] { // ensures parents will appear before their children
         var sortedExpandedNodes = [String]()
         var trees = [String]()
@@ -71,7 +94,7 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
     
     // encode expanded node identifiers for saving as persistent data
     func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
-        guard let node = nodefromNSTreenode(from: item!) else {return false}
+        guard let node = nodefromNSTreenode(from: item!) else {return nil}
         return node.id.uuidString
     }
     
@@ -113,26 +136,5 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
         return treeNode
     }
     
-    func getExpandedNodeIDs() -> [String] { // supports saving expanded nodes when refreshing views (non-persistent data)
-        guard treeController.arrangedObjects.children!.count > 0 else {return []}
-        var expandedNodeIDs = [String]()
-        var node:Node? = nil
-        for i in 0 ..< treeController.arrangedObjects.children!.count {
-            node = nodefromNSTreenode(from: treeController.arrangedObjects.children?[i] as Any)
-            if outlineView.isItemExpanded(treeController.arrangedObjects.children?[i]) {
-                expandedNodeIDs.append(node!.id.uuidString)
-            }
-            if treeController.arrangedObjects.children![i].children != nil {
-                for j in 0 ..< treeController.arrangedObjects.children![i].children!.count {
-                    node = nodefromNSTreenode(from: treeController.arrangedObjects.children?[i].children?[j] as Any)
-                    if outlineView.isItemExpanded(treeController.arrangedObjects.children?[i].children?[j]) {
-                        expandedNodeIDs.append(node!.id.uuidString)
-                    }
-                }
-            }
-        }
-        return expandedNodeIDs
-    }
-
 }
 

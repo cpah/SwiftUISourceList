@@ -11,7 +11,6 @@
 		F5321AD425F63869000C224F /* SourceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F5321AD225F63869000C224F /* SourceViewController.xib */; };
 		F533EA8025F6989300798021 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F533EA7F25F6989300798021 /* Nodes.swift */; };
 		F533EA8425F6B2C200798021 /* MoveNodeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */; };
-		F554A92325F44C700025C50B /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = F554A92225F44C700025C50B /* nodes.json */; };
 		F5894F7625F29B2600F43B56 /* SwiftUISourceListApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */; };
 		F5894F7825F29B2600F43B56 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5894F7725F29B2600F43B56 /* ContentView.swift */; };
 		F5894F7A25F29B2700F43B56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5894F7925F29B2700F43B56 /* Assets.xcassets */; };
@@ -25,7 +24,6 @@
 		F5321AD225F63869000C224F /* SourceViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SourceViewController.xib; sourceTree = "<group>"; };
 		F533EA7F25F6989300798021 /* Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nodes.swift; sourceTree = "<group>"; };
 		F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveNodeSheet.swift; sourceTree = "<group>"; };
-		F554A92225F44C700025C50B /* nodes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = nodes.json; path = Data/nodes.json; sourceTree = "<group>"; };
 		F5894F7225F29B2600F43B56 /* SwiftUISourceList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUISourceList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUISourceListApp.swift; sourceTree = "<group>"; };
 		F5894F7725F29B2600F43B56 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -74,7 +72,6 @@
 				F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */,
 				F533EA7F25F6989300798021 /* Nodes.swift */,
 				F5F716BC25F97D7B00BDDB52 /* trees.json */,
-				F554A92225F44C700025C50B /* nodes.json */,
 				F58D2CC225F442AC00675592 /* Helper.swift */,
 				F5894F7925F29B2700F43B56 /* Assets.xcassets */,
 				F5894F7E25F29B2800F43B56 /* Info.plist */,
@@ -149,7 +146,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F554A92325F44C700025C50B /* nodes.json in Resources */,
 				F5F716BD25F97D7B00BDDB52 /* trees.json in Resources */,
 				F5321AD425F63869000C224F /* SourceViewController.xib in Resources */,
 				F5894F7D25F29B2700F43B56 /* Preview Assets.xcassets in Resources */,
