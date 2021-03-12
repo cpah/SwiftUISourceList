@@ -22,6 +22,7 @@ struct ContentView: View {
                     let index = getTreeIndex(forID: nodeID)
                     let newBranch = Tree(type: .branch, name: "New Branch", parentID: trees[index].id)
                     trees.append(newBranch)
+                    // sort trees into type order; branches must come before leaves for populateNodes to work
                     trees = trees.sorted { $0.type.rawValue < $1.type.rawValue }
                     nodes = populateNodes()
                     newContent = true
@@ -82,6 +83,7 @@ struct ContentView: View {
     }
 }
 
+// Delegates are normally assigned in makeNSViewController() but we need an NSOutlineViewDelegate. Our outlineView is a property of SourceViewController and its NSOutlineViewDelegate does not exist until makeNSViewController(() has completed. We must assign our delegate in updateNSViewController(). We only need to assign our delegate once. This variable supports that. A global rather than a @State private var is used to avoid modifying it within its view, which is not supported
 var sourceVCDelegateSet = false
 
 struct SourceVC: NSViewControllerRepresentable {
@@ -98,7 +100,7 @@ struct SourceVC: NSViewControllerRepresentable {
     
     func updateNSViewController(_ nsViewController: NSViewControllerType, context: Context) {
         guard let sourceVC = nsViewController as? SourceViewController else {return}
-        if newContent {
+        if newContent { // only update contents when they have changed
             sourceVC.setContents(nodes: nodes)
             let indexPath = getNodeIndexPath(nodes: nodes, nodeID: nodeID)
             if indexPath.count == 0 {
@@ -154,7 +156,7 @@ struct SourceVC: NSViewControllerRepresentable {
         func outlineViewSelectionDidChange(_ notification: Notification) {
             guard let outlineView = notification.object as? NSOutlineView else {return}
             guard self.parent.nodes.count > 0 else {return}
-            self.parent.newContent = false
+            self.parent.newContent = false // displayed contents have not changed
             guard outlineView.selectedRow >= 0 else {
                 self.parent.nodeID = nil
                 self.parent.nodeName = ""

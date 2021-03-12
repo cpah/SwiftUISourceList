@@ -18,19 +18,22 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        outlineView.floatsGroupRows = false
         // Do view setup here.
     }
     
     override func viewDidAppear() {
+        super.viewDidAppear()
         view.window?.makeFirstResponder(outlineView)
     }
     
     @IBAction func nameCellEdited(_ sender: Any) {} // Stub for delegate to surpress spurious warning
     
     func setContents(nodes: [Node]) {
-        savedExpandedNodes = getExpandedNodeIDs()
+        savedExpandedNodes = getExpandedNodeIDs() // get any existing expanded nodes before updating displayed content
         contents = nodes
-        if savedExpandedNodes.count > 0 { // restore expanded nodes when refreshing view
+        // restore expanded nodes
+        if savedExpandedNodes.count > 0 { // restore any existing expanded nodes when refreshing view
             for i in 0 ..< savedExpandedNodes.count {
                 outlineView.expandItem(nodeFromIdentifier(anObject: savedExpandedNodes[i]))
             }
@@ -84,12 +87,12 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
             let node = treeNode.representedObject as? Node
             return node
     }
-    // find the treeNode associated with an identifier (by name) by processing identifier (name here because identifier changes on each app launch) - and treeController nodes array in next function
+    // find the treeNode associated with its nodes's identifier 
     private func nodeFromIdentifier(anObject: Any) -> NSTreeNode? {
         return nodeFromIdentifier(anObject: anObject, nodes: treeController.arrangedObjects.children)
     }
 
-    // search all levels of tree structure (recursively) to find treeNode associated with the passed identifier (name)
+    // search all levels of tree structure (recursively) to find treeNode associated with the passed identifier
     private func nodeFromIdentifier(anObject: Any, nodes: [NSTreeNode]!) -> NSTreeNode? {
         var treeNode: NSTreeNode?
         for node in nodes {
@@ -111,6 +114,7 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
     }
     
     func getExpandedNodeIDs() -> [String] { // supports saving expanded nodes when refreshing views (non-persistent data)
+        guard treeController.arrangedObjects.children!.count > 0 else {return []}
         var expandedNodeIDs = [String]()
         var node:Node? = nil
         for i in 0 ..< treeController.arrangedObjects.children!.count {
