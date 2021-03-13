@@ -11,6 +11,8 @@
 		F5321AD425F63869000C224F /* SourceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F5321AD225F63869000C224F /* SourceViewController.xib */; };
 		F533EA8025F6989300798021 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F533EA7F25F6989300798021 /* Nodes.swift */; };
 		F533EA8425F6B2C200798021 /* MoveNodeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */; };
+		F57862DA25FC216A00FC28D2 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57862D925FC216A00FC28D2 /* DetailView.swift */; };
+		F57862DE25FC227700FC28D2 /* SourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57862DD25FC227700FC28D2 /* SourceView.swift */; };
 		F5894F7625F29B2600F43B56 /* SwiftUISourceListApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */; };
 		F5894F7825F29B2600F43B56 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5894F7725F29B2600F43B56 /* ContentView.swift */; };
 		F5894F7A25F29B2700F43B56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5894F7925F29B2700F43B56 /* Assets.xcassets */; };
@@ -24,6 +26,8 @@
 		F5321AD225F63869000C224F /* SourceViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SourceViewController.xib; sourceTree = "<group>"; };
 		F533EA7F25F6989300798021 /* Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nodes.swift; sourceTree = "<group>"; };
 		F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveNodeSheet.swift; sourceTree = "<group>"; };
+		F57862D925FC216A00FC28D2 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		F57862DD25FC227700FC28D2 /* SourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceView.swift; sourceTree = "<group>"; };
 		F5894F7225F29B2600F43B56 /* SwiftUISourceList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUISourceList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUISourceListApp.swift; sourceTree = "<group>"; };
 		F5894F7725F29B2600F43B56 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -46,6 +50,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F57862E225FC3E2A00FC28D2 /* SourceView */ = {
+			isa = PBXGroup;
+			children = (
+				F57862DD25FC227700FC28D2 /* SourceView.swift */,
+				F5321AD125F63869000C224F /* SourceViewController.swift */,
+				F5321AD225F63869000C224F /* SourceViewController.xib */,
+				F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */,
+			);
+			path = SourceView;
+			sourceTree = "<group>";
+		};
+		F57862E325FC3EB800FC28D2 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		F5894F6925F29B2600F43B56 = {
 			isa = PBXGroup;
 			children = (
@@ -65,11 +87,11 @@
 		F5894F7425F29B2600F43B56 /* SwiftUISourceList */ = {
 			isa = PBXGroup;
 			children = (
+				F57862E325FC3EB800FC28D2 /* New Group */,
 				F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */,
 				F5894F7725F29B2600F43B56 /* ContentView.swift */,
-				F5321AD125F63869000C224F /* SourceViewController.swift */,
-				F5321AD225F63869000C224F /* SourceViewController.xib */,
-				F533EA8325F6B2C200798021 /* MoveNodeSheet.swift */,
+				F57862E225FC3E2A00FC28D2 /* SourceView */,
+				F57862D925FC216A00FC28D2 /* DetailView.swift */,
 				F533EA7F25F6989300798021 /* Nodes.swift */,
 				F5F716BC25F97D7B00BDDB52 /* trees.json */,
 				F58D2CC225F442AC00675592 /* Helper.swift */,
@@ -163,9 +185,11 @@
 				F533EA8425F6B2C200798021 /* MoveNodeSheet.swift in Sources */,
 				F533EA8025F6989300798021 /* Nodes.swift in Sources */,
 				F5894F7825F29B2600F43B56 /* ContentView.swift in Sources */,
+				F57862DA25FC216A00FC28D2 /* DetailView.swift in Sources */,
 				F5321AD325F63869000C224F /* SourceViewController.swift in Sources */,
 				F5894F7625F29B2600F43B56 /* SwiftUISourceListApp.swift in Sources */,
 				F58D2CC325F442AC00675592 /* Helper.swift in Sources */,
+				F57862DE25FC227700FC28D2 /* SourceView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

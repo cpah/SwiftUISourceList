@@ -110,7 +110,7 @@ class SourceViewController: NSViewController, NSOutlineViewDataSource {
             let node = treeNode.representedObject as? Node
             return node
     }
-    // find the treeNode associated with its nodes's identifier 
+    // find the treeNode associated with the passed identifier
     private func nodeFromIdentifier(anObject: Any) -> NSTreeNode? {
         return nodeFromIdentifier(anObject: anObject, nodes: treeController.arrangedObjects.children)
     }

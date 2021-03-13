@@ -74,11 +74,3 @@ struct MoveNodeSheet: View {
     
 }
 
-struct MoveNodeSheet_Previews: PreviewProvider {
-    @State static var moveNodeSheetIsVisible = true
-    @State static var nodes = [Node(id: UUID(), type: .leaf, name: "Leaf 1", children: [])]
-    @State static var nodeID: UUID? = nil
-    static var previews: some View {
-        MoveNodeSheet(moveNodeSheetIsVisible: $moveNodeSheetIsVisible, nodes: $nodes, nodeID: $nodeID)
-    }
-}
