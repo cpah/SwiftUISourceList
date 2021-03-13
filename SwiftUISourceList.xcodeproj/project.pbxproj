@@ -61,13 +61,6 @@
 			path = SourceView;
 			sourceTree = "<group>";
 		};
-		F57862E325FC3EB800FC28D2 /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		F5894F6925F29B2600F43B56 = {
 			isa = PBXGroup;
 			children = (
@@ -87,7 +80,6 @@
 		F5894F7425F29B2600F43B56 /* SwiftUISourceList */ = {
 			isa = PBXGroup;
 			children = (
-				F57862E325FC3EB800FC28D2 /* New Group */,
 				F5894F7525F29B2600F43B56 /* SwiftUISourceListApp.swift */,
 				F5894F7725F29B2600F43B56 /* ContentView.swift */,
 				F57862E225FC3E2A00FC28D2 /* SourceView */,
